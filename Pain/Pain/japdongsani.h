@@ -4,14 +4,14 @@
 #include <Windows.h>
 #include <functional>
 
-void border(int len) {              //벽
+void border(int len) {              //Border
     for (int i = 0; i < len; i++) {
         std::cout << "=" << std::ends;
     }
     std::cout << std::endl;
 }
 
-void reTerm(char fill = ' ') {            //가져온 ASSEMBLY 코드(터미널 재설정)
+void reTerm(char fill = ' ') {            //Clear Terminal
     COORD tl = { 0,0 };
     CONSOLE_SCREEN_BUFFER_INFO s;
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);

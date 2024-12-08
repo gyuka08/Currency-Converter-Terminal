@@ -1,26 +1,26 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <curl/curl.h>          //통신 헤더
-#include "nlohmann/json.hpp"            //nlohmann의 json 읽기 헤더(Github)
-#include "japdongsani.h"            //기타 함수들을 포함하는 사용자 헤더
+#include <curl/curl.h>          //Communication Header
+#include "nlohmann/json.hpp"            //nlohmann JSON
+#include "japdongsani.h"
 #include <cstdlib>
 
 using json = nlohmann::json;
 
-struct aPIBasket {           //API에서 받은 데이터를 저장(Github 참고함)
+struct aPIBasket {           //Store data from API
     std::string DefaultCurrency;
     std::vector<std::string> Targets;
     std::vector<double> USDexchange;
 };
 
-//API의 콜백(Github 참고함)
+//Callback API
 size_t burnCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
     response->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
 
-//API로부터 환율 값 가져오기(Github 참고함)
+//get Exchange Rates
 bool fetchExchangeRates(const std::string& DefaultCurrency, aPIBasket& Basket) {
     std::string url = "https://v6.exchangerate-api.com/v6/ff01c2fa5e04256a3bc48bc4/latest/" + DefaultCurrency;
     std::string response;
@@ -61,8 +61,8 @@ double XEUR = 0.9;
 double XGBP = 0.8;
 double XJPY = 160;
 
-const int COL1 = 35;            //터미널의 너비 1
-const int COL2 = 80;            //터미널의 너비 2
+const int COL1 = 35;            //Text Width 1
+const int COL2 = 80;            //Text Width 2
 
 void wonToAnything();
 void wonAskSeg();
@@ -74,18 +74,18 @@ void otherBuisnessSeg();
 
 int main() {
     std::string DefaultCurrency;
-    DefaultCurrency = "USD";            //기준 환율을 달러로 설정
+    DefaultCurrency = "USD";            //Make Dollar for Default Currency
 
     aPIBasket Basket;
 
-    //연결 실패
+    //Connectin failure
     if (!fetchExchangeRates(DefaultCurrency, Basket)) {
-        std::cout << "주의: 환율을 가져오지 못했습니다. 서비스 장애이거나 컴퓨터가 네트워크에 연결하고 싶어할 수 있습니다." << std::endl;
-        std::cout << "주의: 연결이 오프라인입니다. 프로그램은 고정된 근사값을 사용하여 계산합니다." << std::endl;
+        std::cout << "WARNING : Cannot fetch Exchange Rates. Check if your Internet connection is stable." << std::endl;
+        std::cout << "WARNING : The Connection is Offline. The Program will use Pre-typed Values for Exchange." << std::endl;
         border(COL2);
     }
-    else if (fetchExchangeRates(DefaultCurrency, Basket)) {          //연결 성공
-        //달러 대 원 환율을 저장
+    else if (fetchExchangeRates(DefaultCurrency, Basket)) {          //Connection Success
+        //Store Dollar-Won Rates
         for (size_t i = 0; i < Basket.Targets.size(); ++i) {
             if (Basket.Targets[i] == "KRW") {
                 XKRW = Basket.USDexchange[i];
@@ -93,7 +93,7 @@ int main() {
             }
         }
 
-        //달러 대 유로 환율을 저장
+        //Store Dollar-Euro Rates
         for (size_t i = 0; i < Basket.Targets.size(); ++i) {
             if (Basket.Targets[i] == "EUR") {
                 XEUR = Basket.USDexchange[i];
@@ -101,7 +101,7 @@ int main() {
             }
         }
 
-        //달러 대 파운드 환율을 저장
+        //Store Dollar-Pound Rates
         for (size_t i = 0; i < Basket.Targets.size(); ++i) {
             if (Basket.Targets[i] == "GBP") {
                 XGBP = Basket.USDexchange[i];
@@ -109,7 +109,7 @@ int main() {
             }
         }
 
-        //달러 대 엔 환율을 저장
+        //Store Dollar-Yen Rates
         for (size_t i = 0; i < Basket.Targets.size(); ++i) {
             if (Basket.Targets[i] == "JPY") {
                 XJPY = Basket.USDexchange[i];
@@ -118,36 +118,35 @@ int main() {
         }
     }
 
-    //시작 부분 불러오기
+    //Call Segment 'Welcome'
     welcomeSeg();
 
     return 0;
 }
 
 void yenToAnything(double money, int choice) {
-    std::string targetname = "달러";
+    std::string targetname = "USD";
     double target = XKRW;
     switch (choice) {
     case 1:
-        targetname = "달러";
+        targetname = "USD";
         target = XJPY;
         break;
     case 2:
-        targetname = "원";
+        targetname = "KRW";
         target = XKRW;
         break;
     case 3:
-        targetname = "유로";
+        targetname = "Euro";
         target = XEUR;
         break;
     case 4:
-        targetname = "파운드";
+        targetname = "GBP";
         target = XGBP;
         break;
     }
 
-    //std::cout << int(money) << "엔은 " << money / XJPY * target << targetname << "입니다." << std::endl;
-    printf("%d엔은 %f%s입니다.", int(money), money / XJPY * target, targetname.c_str());
+    printf("%dYen Exchanges to %f%s.", int(money), money / XJPY * target, targetname.c_str());
     std::cout << std::endl;
 
     border(COL2);
@@ -161,7 +160,7 @@ void yenAskSeg() {
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "변환할 값어치를 입력하여 주십시오.(\\)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Enter Amount of Bills to Exchange.(\\)" << std::endl;
     std::cout << ">>" << std::ends;
 
     while (true) {
@@ -170,9 +169,9 @@ void yenAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환할 값어치를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Amount of Bills to Exchange." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -180,12 +179,12 @@ void yenAskSeg() {
         }
     }
 
-    std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+    std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
 
-    std::cout << std::setw(COL1) << std::left << "미국 달러($)" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "대한민국 원(\\)" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "유로(€)" << std::right << "3" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "영국 파운드(?)" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "U.S. Dollar($)" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Republic of Korea Won(\\)" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Euro(€)" << std::right << "3" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Great Britain Pound(?)" << std::right << "4" << std::endl;
 
     std::cout << ">>" << std::ends;
 
@@ -194,9 +193,9 @@ void yenAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -210,19 +209,19 @@ void yenAskSeg() {
 }
 
 void poundToAnything(double money, int choice) {
-    std::string targetname = "달러";
+    std::string targetname = "USD";
     double target = XKRW;
     switch (choice) {
     case 1:
-        targetname = "달러";
+        targetname = "USD";
         target = 1;
         break;
     case 2:
-        targetname = "원";
+        targetname = "KRW";
         target = XKRW;
         break;
     case 3:
-        targetname = "유로";
+        targetname = "Euro";
         target = XEUR;
         break;
     case 4:
@@ -231,8 +230,7 @@ void poundToAnything(double money, int choice) {
         break;
     }
 
-    //std::cout << int(money) << "파운드는 " << money / XGBP * target << targetname << "입니다." << std::endl;
-    printf("%d파운드는 %f%s입니다.", int(money), money / XGBP * target, targetname.c_str());
+    printf("%dPound Exchanges to %f%s.", int(money), money / XGBP * target, targetname.c_str());
     std::cout << std::endl;
 
     border(COL2);
@@ -246,7 +244,7 @@ void poundAskSeg() {
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "변환할 값어치를 입력하여 주십시오.(\\)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Enter Amount of Bills to Exchange.(\\)" << std::endl;
     std::cout << ">>" << std::ends;
 
     while (true) {
@@ -255,9 +253,9 @@ void poundAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환할 값어치를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Amount of Bills to Exchange." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -265,12 +263,12 @@ void poundAskSeg() {
         }
     }
 
-    std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+    std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
 
-    std::cout << std::setw(COL1) << std::left << "미국 달러($)" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "대한민국 원(\\)" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "유로(€)" << std::right << "3" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "일본 엔(?)" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "U.S. Dollar($)" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Republic of Korea Won(\\)" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Euro(€)" << std::right << "3" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Japan Yen(?)" << std::right << "4" << std::endl;
 
     std::cout << ">>" << std::ends;
 
@@ -279,9 +277,9 @@ void poundAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -295,19 +293,19 @@ void poundAskSeg() {
 }
 
 void euroToAnything(double money, int choice) {
-    std::string targetname = "달러";
+    std::string targetname = "USD";
     double target = XKRW;
     switch (choice) {
     case 1:
-        targetname = "달러";
+        targetname = "USD";
         target = 1;
         break;
     case 2:
-        targetname = "원";
+        targetname = "KRW";
         target = XKRW;
         break;
     case 3:
-        targetname = "파운드";
+        targetname = "GBP";
         target = XGBP;
         break;
     case 4:
@@ -316,8 +314,7 @@ void euroToAnything(double money, int choice) {
         break;
     }
 
-    //std::cout << int(money) << "유로는 " << money / XEUR * target << targetname << "입니다." << std::endl;
-    printf("%d유로는 %f%s입니다.", (int)money, money / XEUR * target, targetname.c_str());
+    printf("%d Euro Exchanges to %f%s.", (int)money, money / XEUR * target, targetname.c_str());
     std::cout << std::endl;
 
     border(COL2);
@@ -331,7 +328,7 @@ void euroAskSeg() {
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "변환할 값어치를 입력하여 주십시오.(\\)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Enter Amount of Bills to Exchange.(\\)" << std::endl;
     std::cout << ">>" << std::ends;
 
     while (true) {
@@ -340,9 +337,9 @@ void euroAskSeg() {
         if (std::cin.fail() || eur <= 0 ) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환할 값어치를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Amount of Bills to Exchange." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -350,12 +347,12 @@ void euroAskSeg() {
         }
     }
 
-    std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+    std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
 
-    std::cout << std::setw(COL1) << std::left << "미국 달러($)" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "대한민국 원(\\)" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "영국 파운드(?)" << std::right << "3" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "일본 엔(?)" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "U.S. Dollar($)" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Republic of Korea Won(\\)" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Great Britain Pound(?)" << std::right << "3" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Japan Yen(?)" << std::right << "4" << std::endl;
 
     std::cout << ">>" << std::ends;
 
@@ -364,9 +361,9 @@ void euroAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -380,19 +377,19 @@ void euroAskSeg() {
 }
 
 void wonToAnything(double money, int choice) {
-    std::string targetname = "달러";
+    std::string targetname = "USD";
     double target = XKRW;
     switch (choice) {
     case 1:
-        targetname = "달러";
+        targetname = "USD";
         target = 1;
         break;
     case 2:
-        targetname = "유로";
+        targetname = "Euro";
         target = XEUR;
         break;
     case 3:
-        targetname = "파운드";
+        targetname = "GBP";
         target = XGBP;
         break;
     case 4:
@@ -401,8 +398,7 @@ void wonToAnything(double money, int choice) {
         break;
     }
 
-    //std::cout << int(money) << "원은 " << money / XKRW * target << targetname << "입니다." << std::endl;
-    printf("%d원은 %f%s입니다.", int(money), money / XKRW * target, targetname.c_str());
+    printf("%dWon Exchanges to %f%s.", int(money), money / XKRW * target, targetname.c_str());
     std::cout << std::endl;
 
     border(COL2);
@@ -416,7 +412,7 @@ void wonAskSeg() {
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "변환할 값어치를 입력하여 주십시오.(\\)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Enter Amount of Bills to Exchange.(\\)" << std::endl;
     std::cout << ">>" << std::ends;
 
     while (true) {
@@ -425,9 +421,9 @@ void wonAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환할 값어치를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Amount of Bills to Exchange." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -435,12 +431,12 @@ void wonAskSeg() {
         }
     }
 
-    std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+    std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
 
-    std::cout << std::setw(COL1) << std::left << "미국 달러($)" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "유로(€)" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "영국 파운드(?)" << std::right << "3" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "일본 엔(?)" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "U.S. Dollar($)" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Euro(€)" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Great Britain Pound(?)" << std::right << "3" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Japan Yen(?)" << std::right << "4" << std::endl;
 
     std::cout << ">>" << std::ends;
     
@@ -449,9 +445,9 @@ void wonAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -465,19 +461,19 @@ void wonAskSeg() {
 }
 
 void dollarToAnything(double money, int choice) {
-    std::string targetname = "원";
+    std::string targetname = "KRW";
     double target = XKRW;
     switch (choice) {
     case 1:
-        targetname = "원";
+        targetname = "KRW";
         target = XKRW;
         break;
     case 2:
-        targetname = "유로";
+        targetname = "Euro";
         target = XEUR;
         break;
     case 3:
-        targetname = "파운드";
+        targetname = "GBP";
         target = XGBP;
         break;
     case 4:
@@ -486,8 +482,7 @@ void dollarToAnything(double money, int choice) {
         break;
     }
 
-    //std::cout << int(money) << "달러는 " << money * target << targetname << "입니다." << std::endl;
-    printf("%d달러는 %f%s입니다.", int(money), money * target, targetname.c_str());
+    printf("$%d Exchanges to %f%s.", int(money), money * target, targetname.c_str());
     std::cout << std::endl;
 
     border(COL2);
@@ -501,7 +496,7 @@ void dollarAskSeg() {
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "변환할 값어치를 입력하여 주십시오.($)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Enter Amount of Bills to Exchange.($)" << std::endl;
     std::cout << ">>" << std::ends;
 
     while (true) {
@@ -510,9 +505,9 @@ void dollarAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환할 값어치를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Amount of Bills to Exchange." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -520,12 +515,12 @@ void dollarAskSeg() {
         }
     }
 
-    std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+    std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
 
-    std::cout << std::setw(COL1) << std::left << "대한민국 원(\\)" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "유로(€)" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "영국 파운드(?)" << std::right << "3" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "일본 엔(?)" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Republic of Korea Won(\\)" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Euro(€)" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Great Britain Pound(?)" << std::right << "3" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Japan Yen(?)" << std::right << "4" << std::endl;
 
     std::cout << ">>" << std::ends;
 
@@ -534,9 +529,9 @@ void dollarAskSeg() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore();
-            std::cout << "올바르지 않은 입력입니다." << std::endl;
+            std::cout << "Invalid." << std::endl;
             border(COL2);
-            std::cout << "변환하고자 하는 상대 재화를 입력하여 주십시오." << std::endl;
+            std::cout << "Enter Target Currency to Exchange Your value to." << std::endl;
             std::cout << ">>" << std::ends;
         }
         else {
@@ -571,31 +566,31 @@ void selectYourMoneySeg() {
         yenAskSeg();
     }
     else {
-        std::cout << "올바른 형식의 입력이 아닙니다." << std::ends;
+        std::cout << "Invalid." << std::ends;
         selectYourMoneySeg();
     }
 }
 
-void welcomeSeg() {          //프로그램 시작
-    std::cout << "환율 계산기에 오신 것을 환영합니다. 원하는 작업을 선택하여 번호를 입력하여 주십시오." << std::endl;
-    std::cout << "최신의 환율을 가져오기 위해 인터넷 연결이 필요합니다." << std::endl;
+void welcomeSeg() {          //Program Start
+    std::cout << "Welcome to Currency Converter. Enter a Number of wanted Task." << std::endl;
+    std::cout << "Internet Connection Required to get latest Exchange Rates." << std::endl;
 
     border(COL2);
 
-    std::cout << std::setw(COL1) << std::left << "원\\에서 변환" << std::right << "1(기본값)" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "달러$에서 변환" << std::right << "2" << std::endl;
-    std::cout << std::setw(COL1+1) << std::left << "유로€에서 변환 " << std::right << "3" << std::endl;           //유로 기호가 칼럼을 1칸 줄임.이유불명
-    std::cout << std::setw(COL1) << std::left << "파운드?에서 변환" << std::right << "4" << std::endl;
-    std::cout << std::setw(COL1) << std::left << "엔?에서 변환" << std::right << "5" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Exchange from KRW\\" << std::right << "1(Default)" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Exchange from USD$" << std::right << "2" << std::endl;
+    std::cout << std::setw(COL1+1) << std::left << "Exchange from Euro€" << " " << std::right << "3" << std::endl;           //Euro Character(€) will Reduce Column by 1.
+    std::cout << std::setw(COL1) << std::left << "Exchange from GBP?" << std::right << "4" << std::endl;
+    std::cout << std::setw(COL1) << std::left << "Exchange from JPY?" << std::right << "5" << std::endl;
 
     selectYourMoneySeg();
 }
 
-void otherBuisnessSeg() {            //재시작 or 종료
+void otherBuisnessSeg() {            //Reboot and Cancel
     char inp;
-    std::cout << std::left << "다른 작업을 하시겠습니까?" << std::endl;
-    std::cout << std::setw(COL2) << std::right << "재시작:y(기본값)" << std::endl;
-    std::cout << std::setw(COL2) << std::right << "취소 :n" << std::endl;
+    std::cout << std::left << "Will you Restart your Task again?" << std::endl;
+    std::cout << std::setw(COL2) << std::right << "Reboot : y(Default)" << std::endl;
+    std::cout << std::setw(COL2) << std::right << "Cancel : n" << std::endl;
     std::cout << ">>" << std::ends;
 
     std::cin >> inp;
@@ -611,11 +606,7 @@ void otherBuisnessSeg() {            //재시작 or 종료
             reTerm();
             welcomeSeg();
         default:
-            std::cout << "올바른 형식의 입력이 아닙니다." << std::ends;
+            std::cout << "Invalid." << std::ends;
             otherBuisnessSeg();
     }
 }
-
-
-// 셰종어졔훈민졍ㅡ음
-// 나라ㅅ말싸미 듕귁에달아 문짜와로서르사맛디아니할쌔 이런젼차로어린백셩이니르고져홇배이셔도 마침내제뜨들시러펴지몯홇노미하니라 내이룰위하야어엿비너겨 새로스물여듧짜룰맹그노니 사람마다하여수Vㅣ니겨날로쑤메뼌한킈하고져핧ㅅ따르미니라.

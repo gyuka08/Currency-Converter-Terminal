@@ -1,5 +1,5 @@
 # Currency-Converter-Terminal
 
-my crappy first program
+my first cumputer program
 made for school project
 somehow it got accepted

@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\kangs\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Currency-Converter-Terminal\\Pain\\",
+  "WorkspaceRootPath": "C:\\Users\\kangs\\source\\repos\\Currency-Converter-Terminal\\Pain\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{387C8023-542E-4EDA-B767-975AEE7ECD7F}|Pain\\Pain.vcxproj|C:\\Users\\kangs\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{387C8023-542E-4EDA-B767-975AEE7ECD7F}|Pain\\Pain.vcxproj|C:\\Users\\kangs\\source\\repos\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{387C8023-542E-4EDA-B767-975AEE7ECD7F}|Pain\\Pain.vcxproj|solutionrelative:Pain\\moneyhandler.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,15 +20,29 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "moneyhandler.cpp",
-              "DocumentMoniker": "C:\\Users\\kangs\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp",
+              "DocumentMoniker": "C:\\Users\\kangs\\source\\repos\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp",
               "RelativeDocumentMoniker": "Pain\\moneyhandler.cpp",
-              "ToolTip": "C:\\Users\\kangs\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp",
+              "ToolTip": "C:\\Users\\kangs\\source\\repos\\Currency-Converter-Terminal\\Pain\\Pain\\moneyhandler.cpp",
               "RelativeToolTip": "Pain\\moneyhandler.cpp",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAAAAwAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAEkCAAAAAAAAAAAxwFoCAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-19T00:22:58.987Z",
               "IsPinned": true,
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             }
           ]
         }
